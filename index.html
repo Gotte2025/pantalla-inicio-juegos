@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<!-- Created with https://packager.turbowarp.org/ -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- We only include this to explicitly loosen the CSP of various packager environments. It does not provide any security. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: blob:">
+  <title>PantallaInicio_Juegos</title>
+  <style>
+    body {
+      color: #ffffff;
+      font-family: sans-serif;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    :root, body.is-fullscreen {
+      background-color: #000000;
+    }
+    [hidden] {
+      display: none !important;
+    }
+    h1 {
+      font-weight: normal;
+    }
+    a {
+      color: inherit;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    #app, #loading, #error, #launch {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: default;
+      user-select: none;
+      -webkit-user-select: none;
+      background-color: #000000;
+    }
+    #launch {
+      background-color: rgba(0, 0, 0, 0.7);
+      cursor: pointer;
+    }
+    .green-flag {
+      width: 80px;
+      height: 80px;
+      padding: 16px;
+      border-radius: 100%;
+      background: rgba(255, 255, 255, 0.75);
+      border: 3px solid hsla(0, 100%, 100%, 1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+    }
+    #loading {
+      
+    }
+    .progress-bar-outer {
+      border: 1px solid currentColor;
+      height: 10px;
+      width: 200px;
+      max-width: 200px;
+    }
+    .progress-bar-inner {
+      height: 100%;
+      width: 0;
+      background-color: currentColor;
+    }
+    .loading-text, noscript {
+      font-weight: normal;
+      font-size: 36px;
+      margin: 0 0 16px;
+    }
+    .loading-image {
+      margin: 0 0 16px;
+    }
+    #error-message, #error-stack {
+      font-family: monospace;
+      max-width: 600px;
+      white-space: pre-wrap;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+    #error-stack {
+      text-align: left;
+      max-height: 200px;
+      overflow: auto;
+    }
+    .control-button {
+      width: 2rem;
+      height: 2rem;
+      padding: 0.375rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+      user-select: none;
+      -webkit-user-select: none;
+      cursor: pointer;
+      border: 0;
+      border-radius: 4px;
+    }
+    .control-button-highlight:hover {
+      background: #ff4c4c26;
+    }
+    .control-button-highlight.active {
+      background: #ff4c4c59;
+    }
+    .fullscreen-button {
+      background: white;
+    }
+    .standalone-fullscreen-button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 0 0 0 4px;
+      padding: 4px;
+      cursor: pointer;
+    }
+    .sc-canvas {
+      cursor: auto;
+    }
+    .sc-monitor-root[data-opcode^="data_"] .sc-monitor-value-color {
+      background-color: #ff8c1a;
+    }
+    .sc-monitor-row-value-outer {
+      background-color: #fc662c;
+    }
+    .sc-monitor-row-value-editing .sc-monitor-row-value-outer {
+      background-color: #e25b27;
+    }
+    
+  
+/* Controles táctiles móviles: solo aparecen en dispositivos táctiles */
+#mobile-arrows { display:none; position:fixed; z-index:99999; left:14px; bottom:14px; width:166px; height:150px; touch-action:none; user-select:none; -webkit-user-select:none; }
+#mobile-arrows button { position:absolute; width:54px; height:54px; border:2px solid rgba(255,255,255,.95); border-radius:14px; background:rgba(30,40,60,.78); color:#fff; font-size:29px; font-weight:700; line-height:1; box-shadow:0 3px 8px rgba(0,0,0,.35); touch-action:none; -webkit-tap-highlight-color:transparent; }
+#mobile-arrows button:active, #mobile-arrows button.pressed { background:rgba(40,135,245,.95); transform:scale(.96); }
+#mobile-up { left:56px; top:0; } #mobile-left { left:0; top:48px; } #mobile-down { left:56px; top:48px; } #mobile-right { left:112px; top:48px; }
+@media (pointer:coarse), (max-width: 800px) { #mobile-arrows { display:block; } }
+@media (orientation:landscape) and (max-height:500px) { #mobile-arrows { transform:scale(.78); transform-origin:bottom left; left:8px; bottom:6px; } }
+
+  </style>
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJQAAACUCAMAAABC4vDmAAABNVBMVEX///8louwlou7///34oxz8//8AmOr///v8//30+v4Am+v3nQAZn+z2pBxZtPD3ohT+9+fj8PzU6/vn9P385cL+/fX5sEYqpu6p1fb5+fnyqDDg8vjH5fqTy/SKxvOh0PV5v/G12vdJr/D647r77dV2u+MUmeJtuvGMyurb29vJychGqeK+vr7V7vXQjRm2trWEg4GlpaXu7e32s0/1u2EuouL226v2xnn1v2/41p5YsOKf1vKz3vSLgnd7alOciGyZgVqRkZCqhEuLb0qUZhzAhCN0aVupeCHElU7llx9zb2qWcD+Yj4Teqlyvp56VbTOFeGR0WTC5ewJkSiJ0XT1dYWWBXSZHQTiufzkpJB3FjzpfVkrho0c6QUhTU1Lf2M3hzqrErYVuSwnXrXBSQyrGvqn4y4wJrdSNAAARq0lEQVR4nO1cfX+a2LbeCgQQCDQCRjRvgsSXqEFQQE1nnDbN2Pa0OZ05PXPPnDNz7pvf/yPctTZoTKcVTWznj5s1v0mj4uZhrWc9e63NJoQ82ZM92ZM92ZM92ZP9PzJRLD4DOwDDf4si9ycDKlaPjvb35b0VK9XOj0+qxT8HGVesnu6XcjJYbtXy8EZBLtWOvj2wZ2enuT1Zzuc+Y3k0ubCXOz0sfjtE4tl+6QuAlqASYLnzs2+Dq3i4v/dlRKugENde7UT86pCeHec+IVGWFUpHX9db4nFprZM+77lC6St6SzyrAaR8ln0W1uFXgnVwXpBz2Zg+60lZPj/4CpDE44L8KY03B4Wwdk+t4n4hDcUDQQHj93eM6jC3SLmHgwJnHe4Qknh8l3OPAAWojnfG92XoHgtqhyEs7q+q5eNA5eT9nfjqoHZPwe8DwCJB3gZUTq492wGm0pdnlbw8aIzrW4q8XHq0Yj1bgykntzuE4TqlbTDtAJVYWzf7uhOeMDxfHWyJqvYott/n+B9sIDJ4FPNpiFOifRnVY3JQXI8p3wZQvSYcOFmNoFyrj09zawn/mBw8LqwZGGxUZspXz5uEESZYZVHnyIN6hfDCZLAWVeH4oZgOM6o5+VRg+t91n/cJR8ajUbtWcuXc6EAg2DE01n/5oTNOMavElBsA6nule9UHuouCWDkYH48r+NUy8Mxd+9187kG0yiA5ghpzpPm9on54XqbfANZzDM+Q/vSC8J31oHLy+UNodZRBKBh3QsjFDwrLdi8xgkkmErH34mWPMB03Q1IfQquDTEz5XJWQ3g8Wy6rXr66+u73yvGa53Lq9UboeeipL5wtba6h4ntmz5Acdhng/WqyisjcvZ7PZ9fWbq9dvuuA5jzCVjPA9JIBZmYc2AK5OARTLKmwXogg2u7lWKShSKWTOiIWzLR21bspLFDvnjoFIb/9CQamqCqgUhVVmbOqpAQZ4vatq27nq5MuMknO18UG1TgWBiLcIanZz06WQ0BRF7U4ZRhjn1qs6DrUV14ulL68U5NoHApyz2hB4Ur780QQM3zWb794vMc0+zF40QdTrchaofGmb2mqdHBQmjACHMGD81Y8mwLjtw+vmyxTUL17L+/iqLPCdwdpZeVtXiV92VC7vgmY3m/Q47wcfVapHdbOHFIdQAsmZd399xzNCI5cFahtdX8MoKKI6AOrSAxFvvgnQOx8ShP1b5Lp6ja+4tz81GaYzyGbVxlNgsbZ2nDEPk1sPRPzyLyZ7B4pMafwoKNL/6S3huVEmqzavYc721gyTd8dIKXQWDR6rdC+SGaY3S0HBq/LVzzBLj7PFbm9TrVor5vJISI7q/+1Hn2acclUm/f4CFDKMEP7dxxZhJpmqDq7aMHpraI7RY4Qyphv39j2NnqLeXJDLv/fT8LG35b7XJO9+6RE+KV/Wtl2bqsL6GcadYG1y2Ws2n/sWRSEp75veZbn5vQQipSg3F73/8Mi7f3hYKVD1X8sreaP4cadrQRUayJlmz5v++k8EpapRPPSmPc/Twtlf39x0rR96vX75OwQlNPbax0f7a+sF+XSTle310cPagIdCjjD9W/SUajoGYcr9VrNMeO1fv/3228+/e15r2vz3pUB4sVoRhMrayngzqaquyz3MvvakAk4ATlFQQ45JvsfAfz0A9bc+abb6IBogZViHEiKM1qHaq24AKrviHAzqE5Fneli1WA6//CYAaP32ur/83cNfymWGmawbTT7NxsTVsuogKFrcvSrP9F9QUAb9WjnBQvrl5UjNy4tmy7sE3TpYC2oDUcigVIIKWj5OIN4/FNXSk+hdvIaE7N8bqem99i7wPX6tiOZL2aSqZleMqDsDmAH7ryxWjQlt80AiLrzp1OtdgKXgylNCq4lKe72yZ5PqJBsUBTaClr35Zqb6Bo8S7+GUV262QBp6r1sUUr+fgJqM1vcQ8lEmqOONVpuAVxPMtveKNOQEcJXXuhviknoKFNajoBru+rWibFDc+WagaAA55uLNzNLxe83L5RC9XvJvH2jW6nNMJ6OAya4UxNoGoAruYFAoQAAF0vq5azkgRaQ3TZnUm6bC5fX6LXAgthCPBFXMrMvA6h1OqIwHI5BrYPOL6xhloXXptYDtl71EFPpTKlPIqawh5az0e7aXBapUaFARF6punTMYwk///tN/avBGudXr9S7Sig9EKoFkCKOsVmsvq1DIBgWtFZ08GL5SATVvPr/pXn/8ryugD4g3DlHuN3tTD1diKtVKpZqRezsBlc91GI6bTptEwJmt9RxKO3XW/fDLdHp5OaXmeYlSiXW33R5kF3qPByWPQAqmzfKUClPvI1Z2sxkUCyhMzatut/t9GkGu7sKElAlpA1AHmaCOGAZVsYnK6L3HEtj6eK0GdAosX0FHM3uVaBbXwFuWm4DKWn7JBgXNTKsFU0vvgkw/qKxizX59w0ohLRb6r7sKqyovE6U6TO9P3H3580M/HNRidKjRERQPOd+/BQSz9y+gDZUi6qnm9NUv17SVwDKwcX+E0uIeyqeLDA8FldyEoaAacO4LTL7fvbczhVVuvNc//Xes05SEFPwVlzreolaJo9UBUHFrbbRBTs7dm3gyQX1CdPpClmHAeqNxOijIebmOwkiIHgZvLq+RQv9zfdMjaQHTvAJHqV0PZiAycQvYjObpylFh0KgedCponUndLayeZcvso2MOThuTDp6UFzr1nNwWGKgJNNP3o9ufZ0CqWfc5lxT/PPE+QCs4e46/8weTk1OYYdzaeWN8Mq4wKXBU1Ep9NSu3BQVMGFdEshxPHLtuFXqsvqGBGd4NXcV7yySguPIlLnLcIM95huGJWG3njiqigN8X7roWTsDFj4eBAje5DZHnGJ7nBQH+5yHFxoMxnWVwfZpw02vo9W68xbnIxc1slr5ksM5ihCKPruENg2GEpasERqjLm4Mqrq5J5HONZCAGIXC4Ks2LneXYYP2rl9cvL3/XnOF86MDn5Yur24vy6oCJg/CqOLgoRMdTVFA7pIV3dj28UrpAIVfnhDR0jDO0NbpSxgjcCipop/43sCQ0NTZWR0rcySyPFezIN03LMkOHFxiOHy8uPXvpU9xfAVWroOd53hkO56ai/NOmMYP3OLhqAwx+EMdXU7N0w9F1G2w4HMbz+VAD+HhH0MH35pYq0cMk3+HBqZ1BeqINeuSVchgqXjDOCagfYDRFT3zAOHEY4EX7UaxHEqtafjQ3oVv2FWnVTB1Ox2mhmnhSUdNxAoyguGhRN1hjPLoD1cY0FnQTzqoqimUpUkTpxQ0tvGI2cQ/o5xwSkdcteIdV74xVoKvgBCdYvGuCA207hr7MwXCepmeSTzJBVZdZIdOlDM2XWCUILMsZsqqvQcYZQ7hmVaI/4MJhQo4d22GMAJArIF8BWhSGITZgTigBOvqeGWgGxxkAXnG4lYUUObvFWjajeVz0AeUGTLFhOKFmw7WCODkBjGrN4Zp1HahGV/QVNeZ4W2LZGHymGZRuPEUJjlRV38F3HMCrOb6lwDCYgOna3CbNKFneUXMPgI/8XFJDwdF5gx+qrBVYFII0F3gO9ZMYMTiCZSUdfAARijmgumNoQHTHoHED95rWUDcMPbYkS9Px4BiJWVncDq9tsBa0XJ4aQO4RGFkd8oE6NzgARcmlsKZiRaFhA9MDx7BwjVHSNJ2Eqjrn5yrrO7aiskP0lGWplmZLiuU4uJhlaY6iguNBVZarHoXsXvRuKShfEzmeaKaq6prJSjY3lCgoKFM0yEcfqAWc0okPOFmLOAGyJSCxBNHRgW9Dw/dtxxlGhgPpAKDAwxSUSZVCaC/0fJOloCKdlUDXawJoHFyg4jgzCBgFFelwljmJgCcGhnNuoAcUAGObjhZJJrETUKwa2ibolsYbAtCSegoYhnARFNYQKahNKJVmBYISQb3RU46msFKAchMYhsbzGh+BAhp6FEPORSqCwrCFnC4pzjABBaikiLdVZW4QnXqK3ulKQCGjlip1utFK+lkCSt7nwM2GD+zg56almEBx24isQDeYSPJ1HqYggYtVepPINsIgJIalmpaaeAqQxkYI0Y6AUwgKlHY+NACUZYDY3UnnZvccqChAhTAGgWM0n1UDjYMZ18ezOXBOyyYBlL+Cpscx8oilaoilDKaqpKSgWGWIVwQ+9tFTvGYIhOdST5EFqI0EAQ1FAXBNcHLHjLf8oQPiEyu+pgMzWAtlMTJsAGBj+CCWmj4PTB/cEUbqEpRNQdHksBwGriHyE6KveEo+3wxTchukNDjAAikCmYKJRjVDzQiB3IAJCAYTj2noKivN+VA1o2DOxCDu0pBonCMtQekIil4DzT6cBJwFp7h6MslsfBuEbnHJ41odJ1CZilAIAsFOQEFizUESDRvQhUKs2FBHgCKoUgiqOffvPKVr6CnwaSwh0fEtJ5EEwiyKhM03CB3K6b10zggkZQjaA9QwDTtIQemGBdlnQ+AiiG8Qx0M79kFAydxECQdQLOakraGGSSFJQEGTQUFZDgflFH+M5WQhezJeGEqVjDUCBwFQbKJFIDG2MEdP0euloHTfR39J5tBPCpMokCiHkHq4xA7ZBxM2BDVIQCWegs8drP7QVfnSFre2j2WoB1NQqk2IoUOxq1sm8hTorWlKqPOM4SgKvIOZzyalDEIOdYc3dB0mvoCHyduKQOvmsaHFIZYHjiqxIGAQwEptwylmYc9KCAp+oaCMGJJPG0LiDYWhaZoxGVpAH8cOYfYRDN6B+s4PscCDmUSNNWoBpoGBbZcWQc0CVYMWKL6jzUM4ZlFPbaoHqasKeQTFGabKQmZDQYRsgUKWg/NxgMKHekHFJBw64BSVBR0aRqEdwoxiYiVOb3ApEZY3wIAgCqIoCHQQA5i4FBUrWOhntmAUmlijK+UcFglRbCU1HfjBjB0HahAUTFroYTCxcsDVdOxyNEtK605gISoYkg3oRY+MQarCyAfh0xJPbcMotLNCqYo9bbyscK0Qi0ioRhRa/cPJ/ChUks8wTtB+GryAbqP1jTXXg+RIeEmRgggrSRlND6+0t97YJe7TXSMczPwIKMYGS4hNWgSrkhlD3akZ0KfArGhFtoH4eWhbBYINje44wEJi2GEA1eYcQghFX+pDIF6oYfZVc9vvoDrYa9OuU4P5I9JBWQAh58x97GHmTtpqARLNcQwoUBls05mk26OVJLwSOB57e442spztg7gH83msGxy0pkw9c7HlM3ZcmCS9pGHgWgDD0R4Ua2AD214GcCatJkc7VqZT7XBps07hAmsWvTR9QTQdnMsn5BOYqrsdyxMTz9tI9XRcQeCFu3UO6iee7izBtlygWugO6iJ4LNlxwtDenEHpBmyrnT6i4phO+2F7PYtuu0LS+/0CT7j79T3DiWKFS3zJM2Jj4OZkdzTG9X6MliAUiwK/aNqTO6R33wVM7gP3nx667UmKhKk06vXOna+ETqNRb7cbk4oI1mmMXBefE3Hd9qgOR4KN4NMqflqsTBrjiXi3OMVwlUbbffAm/uM9uPYOeKTaqLkuhGdcEQUBQEzqAzex9mg0asMLOV1lde/ZAFcT8dDBaIKpxgmd6rhx2nYfvvkUdSEZ2KXr4cmLBMQgqePTk+c+Z/klxFxeBvh1cO6IXoxceMxW+eJyh8liSTfFkF8sRsura73LTfKrG+YXP+Ql/PyjNjTjBiH5k4t/qK2sp2+7F+8P9rmN+w+FlsKSt9r0thmqzKcYMmwHjxNAbbV28/72mGo7eSgrY6v8lph29+BM5k6TTW2Hz2OJx1s+/fgFy+/wsSeCTdcOUMm5XT4gRnYSwsL57h/wO3qcs+TCTkO3sIPzh8OSC1/l8Uww8bC02e6cTy0v186+4vO1Jw+AlZdLXyVyd1Y8Km3HeAj58Q4enssw8aS2/jHye07a2/9GT90Xz85LG3A+L8ul/a/IpT/iOjwt7RW+XMQAoL3c6Tf6EwB3xhWrR7VS8njmfRIhjUr7p3/iX5c4OT6tlVb/3IW8v390VP3WLvoDsk//MMg3ZNGTPdmTPdmTPdmTPdmfb/8HPLcRARM7QrgAAAAASUVORK5CYII=">
+
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="theme-color" content="#111111">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Juegos">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+
+</head>
+<body>
+  <div id="app"></div>
+
+  <div id="launch" class="screen" hidden title="Click to start">
+    <div class="green-flag">
+      <svg viewBox="0 0 16.63 17.5" width="42" height="44">
+        <defs><style>.cls-1,.cls-2{fill:#4cbf56;stroke:#45993d;stroke-linecap:round;stroke-linejoin:round;}.cls-2{stroke-width:1.5px;}</style></defs>
+        <path class="cls-1" d="M.75,2A6.44,6.44,0,0,1,8.44,2h0a6.44,6.44,0,0,0,7.69,0V12.4a6.44,6.44,0,0,1-7.69,0h0a6.44,6.44,0,0,0-7.69,0"/>
+        <line class="cls-2" x1="0.75" y1="16.75" x2="0.75" y2="0.75"/>
+      </svg>
+    </div>
+  </div>
+
+  <div id="loading" class="screen">
+    <noscript>Enable JavaScript</noscript>
+    
+    
+    <div class="progress-bar-outer"><div class="progress-bar-inner" id="loading-inner"></div></div>
+  </div>
+
+  <div id="error" class="screen" hidden>
+    <h1>Error</h1>
+    <details>
+      <summary id="error-message"></summary>
+      <p id="error-stack"></p>
+    </details>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    const appElement = document.getElementById('app');
+    const launchScreen = document.getElementById('launch');
+    const loadingScreen = document.getElementById('loading');
+    const loadingInner = document.getElementById('loading-inner');
+    const errorScreen = document.getElementById('error');
+    const errorScreenMessage = document.getElementById('error-message');
+    const errorScreenStack = document.getElementById('error-stack');
+
+    const handleError = (error) => {
+      console.error(error);
+      if (!errorScreen.hidden) return;
+      errorScreen.hidden = false;
+      errorScreenMessage.textContent = '' + error;
+      let debug = error && error.stack || 'no stack';
+      debug += '\nUser agent: ' + navigator.userAgent;
+      errorScreenStack.textContent = debug;
+    };
+    const setProgress = (progress) => {
+      if (loadingInner) loadingInner.style.width = progress * 100 + '%';
+    };
+    const interpolate = (a, b, t) => a + t * (b - a);
+
+    try {
+      setProgress(0.1);
+
+      const scaffolding = new Scaffolding.Scaffolding();
+      scaffolding.width = 480;
+      scaffolding.height = 360;
+      scaffolding.resizeMode = "preserve-ratio";
+      scaffolding.editableLists = false;
+      scaffolding.usePackagedRuntime = true;
+      scaffolding.setup();
+      scaffolding.appendTo(appElement);
+
+      const vm = scaffolding.vm;
+      window.scaffolding = scaffolding;
+      window.vm = scaffolding.vm;
+      window.Scratch = {
+        vm,
+        renderer: vm.renderer,
+        audioEngine: vm.runtime.audioEngine,
+        bitmapAdapter: vm.runtime.v2BitmapAdapter,
+        videoProvider: vm.runtime.ioDevices.video.provider
+      };
+
+      scaffolding.setUsername("player####".replace(/#/g, () => Math.floor(Math.random() * 10)));
+      scaffolding.setAccentColor("#ff4c4c");
+
+      try {
+        scaffolding.addCloudProvider(new Scaffolding.Cloud.WebSocketProvider(["wss://clouddata.turbowarp.org","wss://clouddata.turbowarp.xyz"], "p4-@PantallaInicio_Juegos.sb3"));
+      } catch (error) {
+        console.error(error);
+      }
+
+      vm.setTurboMode(false);
+      if (vm.setInterpolation) vm.setInterpolation(false);
+      if (vm.setFramerate) vm.setFramerate(30);
+      if (vm.renderer.setUseHighQualityRender) vm.renderer.setUseHighQualityRender(false);
+      if (vm.setRuntimeOptions) vm.setRuntimeOptions({
+        fencing: true,
+        miscLimits: true,
+        maxClones: 300,
+      });
+      if (vm.setCompilerOptions) vm.setCompilerOptions({
+        enabled: true,
+        warpTimer: false
+      });
+      if (vm.renderer.setMaxTextureDimension) vm.renderer.setMaxTextureDimension(2048);
+
+      // enforcePrivacy threat model only makes sense in the editor
+      if (vm.runtime.setEnforcePrivacy) vm.runtime.setEnforcePrivacy(false);
+
+      if (typeof ScaffoldingAddons !== 'undefined') {
+        ScaffoldingAddons.run(scaffolding, {"gamepad":false,"pointerlock":false,"specialCloudBehaviors":false,"unsafeCloudBehaviors":false,"pause":false});
+      }
+
+      scaffolding.setExtensionSecurityManager({
+        getSandboxMode: () => 'unsandboxed',
+        canLoadExtensionFromProject: () => true
+      });
+      for (const extension of []) {
+        vm.extensionManager.loadExtensionURL(extension);
+      }
+
+    } catch (e) {
+      handleError(e);
+    }
+  </script>
+  
+  
+    <script>
+      const getProjectData = (function() {
+        const storage = scaffolding.storage;
+        storage.onprogress = (total, loaded) => {
+          setProgress(interpolate(0.2, 0.98, loaded / total));
+        };
+        
+        storage.addWebStore(
+          [
+            storage.AssetType.ImageVector,
+            storage.AssetType.ImageBitmap,
+            storage.AssetType.Sound,
+            storage.AssetType.Font
+          ].filter(i => i),
+          (asset) => new URL('./assets/' + asset.assetId + '.' + asset.dataFormat, location).href
+        );
+        return () => new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {
+          resolve(xhr.response);
+        };
+        xhr.onerror = () => {
+          if (location.protocol === 'file:') {
+            reject(new Error('Zip environment must be used on a website, not on a local file. To fix this error, use the "Plain HTML" environment instead.'));
+          } else {
+            reject(new Error('Request to load project data failed.'));
+          }
+        };
+        xhr.onprogress = (e) => {
+          if (e.lengthComputable) {
+            setProgress(interpolate(0.1, 0.2, e.loaded / e.total));
+          }
+        };
+        xhr.responseType = 'arraybuffer';
+        xhr.open('GET', "./assets/project.json");
+        xhr.send();
+      });
+      })();
+    </script>
+  <script>
+    const run = async () => {
+      const projectData = await getProjectData();
+      await scaffolding.loadProject(projectData);
+      setProgress(1);
+      loadingScreen.hidden = true;
+      if (false) {
+        scaffolding.start();
+      } else {
+        launchScreen.hidden = false;
+        launchScreen.addEventListener('click', () => {
+          launchScreen.hidden = true;
+          scaffolding.start();
+        });
+        launchScreen.focus();
+      }
+    };
+    run().catch(handleError);
+  </script>
+
+<script>
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./sw.js").catch(function (err) {
+      console.warn("No se pudo registrar el service worker:", err);
+    });
+  });
+}
+</script>
+
+
+<div id="mobile-arrows" aria-label="Controles táctiles del juego">
+  <button id="mobile-up" type="button" aria-label="Arriba">▲</button>
+  <button id="mobile-left" type="button" aria-label="Izquierda">◀</button>
+  <button id="mobile-down" type="button" aria-label="Abajo">▼</button>
+  <button id="mobile-right" type="button" aria-label="Derecha">▶</button>
+</div>
+<script>
+(function () {
+  const keys = {
+    'mobile-up': {key:'ArrowUp', code:'ArrowUp', keyCode:38},
+    'mobile-down': {key:'ArrowDown', code:'ArrowDown', keyCode:40},
+    'mobile-left': {key:'ArrowLeft', code:'ArrowLeft', keyCode:37},
+    'mobile-right': {key:'ArrowRight', code:'ArrowRight', keyCode:39}
+  };
+  function send(type, data) {
+    const ev = new KeyboardEvent(type, {key:data.key, code:data.code, keyCode:data.keyCode, which:data.keyCode, bubbles:true, cancelable:true});
+    document.dispatchEvent(ev);
+  }
+  Object.keys(keys).forEach(function(id) {
+    const button = document.getElementById(id);
+    const data = keys[id];
+    let active = false;
+    function down(ev) {
+      if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+      if (active) return;
+      active = true; button.classList.add('pressed');
+      try { button.setPointerCapture && ev && ev.pointerId !== undefined && button.setPointerCapture(ev.pointerId); } catch (_) {}
+      send('keydown', data);
+    }
+    function up(ev) {
+      if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+      if (!active) return;
+      active = false; button.classList.remove('pressed'); send('keyup', data);
+    }
+    button.addEventListener('pointerdown', down, {passive:false});
+    button.addEventListener('pointerup', up, {passive:false});
+    button.addEventListener('pointercancel', up, {passive:false});
+    button.addEventListener('lostpointercapture', up, {passive:false});
+    button.addEventListener('contextmenu', function(e){e.preventDefault();});
+  });
+  window.addEventListener('blur', function() {
+    Object.keys(keys).forEach(function(id) {
+      const button = document.getElementById(id);
+      if (button.classList.contains('pressed')) {
+        button.classList.remove('pressed');
+        send('keyup', keys[id]);
+      }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
