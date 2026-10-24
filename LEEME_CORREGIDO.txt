@@ -1,0 +1,36 @@
+PAQUETE CORREGIDO — PANTALLA INICIO JUEGOS
+==========================================
+
+Este ZIP conserva los archivos originales del ZIP que generaste en TurboWarp:
+- index.html
+- script.js
+- assets/ (proyecto, imágenes, sonidos y otros recursos)
+
+También incorpora los archivos necesarios para preparar la instalación como PWA:
+- manifest.webmanifest
+- sw.js
+- icons/
+
+IMPORTANTE: subí el CONTENIDO de este ZIP a la raíz del repositorio de GitHub
+Gotte2025/pantalla-inicio-juegos. No subas la carpeta contenedora como una sola
+carpeta dentro del repositorio.
+
+PASOS:
+1. Descargá y descomprimí este ZIP.
+2. En GitHub, abrí el repositorio Gotte2025/pantalla-inicio-juegos.
+3. Si hay archivos previos de la versión incompleta, reemplazá index.html y
+   agregá/subí script.js, la carpeta assets, manifest.webmanifest, sw.js e icons.
+   No borres ningún archivo original de assets.
+4. Hacé Commit changes.
+5. Esperá a que GitHub Pages termine de publicar.
+6. Abrí https://gotte2025.github.io/pantalla-inicio-juegos/ y verificá que el
+   juego arranque sin el error "Scaffolding is not defined".
+
+Si el navegador conserva la versión anterior, probá Ctrl+F5 o una ventana privada.
+
+Cuando funcione, Android puede ofrecer instalar/agregar a pantalla de inicio.
+En iPhone: abrir con Safari > Compartir > Añadir a pantalla de inicio.
+
+El QR definitivo se debe generar solo después de verificar que la dirección pública
+funciona. Dirección prevista:
+https://gotte2025.github.io/pantalla-inicio-juegos/
