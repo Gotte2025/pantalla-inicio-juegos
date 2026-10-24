@@ -147,8 +147,40 @@
 #mobile-arrows button { position:absolute; width:54px; height:54px; border:2px solid rgba(255,255,255,.95); border-radius:14px; background:rgba(30,40,60,.78); color:#fff; font-size:29px; font-weight:700; line-height:1; box-shadow:0 3px 8px rgba(0,0,0,.35); touch-action:none; -webkit-tap-highlight-color:transparent; }
 #mobile-arrows button:active, #mobile-arrows button.pressed { background:rgba(40,135,245,.95); transform:scale(.96); }
 #mobile-up { left:56px; top:0; } #mobile-left { left:0; top:48px; } #mobile-down { left:56px; top:48px; } #mobile-right { left:112px; top:48px; }
-@media (pointer:coarse), (max-width: 800px) { #mobile-arrows { display:block; } }
+@media (pointer:coarse), (max-width: 800px) { #mobile-arrows { display:block; } #mobile-arrows-note { display:block; } }
 @media (orientation:landscape) and (max-height:500px) { #mobile-arrows { transform:scale(.78); transform-origin:bottom left; left:8px; bottom:6px; } }
+
+
+/* Ayuda visible para orientar a quienes juegan desde el QR */
+#game-help-toggle {
+  position: fixed; z-index: 100001; top: 12px; right: 12px;
+  border: 2px solid #fff; border-radius: 12px; padding: 10px 14px;
+  background: rgba(20,30,48,.92); color: #fff; font: 700 15px/1.2 sans-serif;
+  cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,.35);
+}
+#game-help-panel {
+  position: fixed; z-index: 100002; top: 58px; right: 12px;
+  width: min(340px, calc(100vw - 24px)); max-height: min(72vh, 560px);
+  overflow: auto; box-sizing: border-box; padding: 16px;
+  color: #172033; background: rgba(255,255,255,.97); border: 2px solid #4cbf56;
+  border-radius: 14px; box-shadow: 0 6px 24px rgba(0,0,0,.4);
+  font: 14px/1.4 sans-serif;
+}
+#game-help-panel h2 { margin: 0 0 8px; font-size: 20px; }
+#game-help-panel p { margin: 7px 0; }
+#game-help-panel .help-close { float:right; border:0; border-radius:8px; padding:5px 9px; background:#172033; color:#fff; font-size:16px; cursor:pointer; }
+#game-help-panel .help-note { margin-top: 10px; padding: 9px; border-radius: 8px; background:#eaf5ff; font-weight:700; }
+#mobile-arrows-note {
+  display:none; position: fixed; z-index: 99999; left: 10px; bottom: 170px; max-width: 190px;
+  padding: 7px 9px; border-radius: 9px; background: rgba(15,25,40,.9);
+  border: 1px solid #fff; color: #fff; font: 700 12px/1.25 sans-serif;
+  pointer-events: none; box-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+@media (orientation:landscape) and (max-height:500px) {
+ #mobile-arrows-note { bottom: 126px; left: 7px; max-width: 165px; font-size:11px; }
+ #game-help-toggle { top:6px; right:6px; padding:7px 10px; font-size:13px; }
+ #game-help-panel { top:46px; right:6px; max-height:78vh; }
+}
 
   </style>
   <meta name="theme-color" content="#000000">
@@ -352,12 +384,43 @@ if ("serviceWorker" in navigator && (location.protocol === "https:" || location.
 </script>
 
 
+
+<button id="game-help-toggle" type="button" aria-expanded="false" aria-controls="game-help-panel">¿Cómo se juega?</button>
+<section id="game-help-panel" hidden aria-label="Instrucciones de los juegos">
+  <button class="help-close" id="game-help-close" type="button" aria-label="Cerrar ayuda">✕</button>
+  <h2>¿Cómo se juega?</h2>
+  <p><strong>Juego 1 · Gato y coche:</strong> interactuá siguiendo la consigna que aparece en el juego.</p>
+  <p><strong>Juego 2 · Básquet:</strong> jugá con la pelota y seguí las indicaciones de la pantalla.</p>
+  <p><strong>Juego 3 · Atrapa manzanas:</strong> mové el cuenco hacia la izquierda o la derecha para atrapar las manzanas.</p>
+  <p><strong>Juego 4 · Auto y gato:</strong> seguí la consigna que aparece en pantalla para avanzar.</p>
+  <p><strong>Juego 5 · Nave espacial:</strong> usá la <strong>barra espaciadora</strong> para disparar y eliminar los fantasmas.</p>
+  <p><strong>Juego 6 · La rana:</strong> mové la rana con las flechas <strong>↑ ↓ ← →</strong> para esquivar los peligros.</p>
+  <div class="help-note">Importante: las flechas táctiles que aparecen abajo son exclusivamente para el Juego 6 (La rana). En los demás juegos, no las necesitás.</div>
+  <p>Para empezar, tocá la bandera verde cuando aparezca. Para volver al menú, usá el botón de volver del propio juego.</p>
+</section>
+<div id="mobile-arrows-note">⬆️ Estas flechas son SOLO para el Juego 6: LA RANA.</div>
+
 <div id="mobile-arrows" aria-label="Controles táctiles del juego">
   <button id="mobile-up" type="button" aria-label="Arriba">▲</button>
   <button id="mobile-left" type="button" aria-label="Izquierda">◀</button>
   <button id="mobile-down" type="button" aria-label="Abajo">▼</button>
   <button id="mobile-right" type="button" aria-label="Derecha">▶</button>
 </div>
+
+<script>
+(function () {
+  const toggle = document.getElementById('game-help-toggle');
+  const panel = document.getElementById('game-help-panel');
+  const close = document.getElementById('game-help-close');
+  function setOpen(open) {
+    panel.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+  }
+  toggle.addEventListener('click', function () { setOpen(panel.hidden); });
+  close.addEventListener('click', function () { setOpen(false); });
+})();
+</script>
+
 <script>
 (function () {
   const keys = {
